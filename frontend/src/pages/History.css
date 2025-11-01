@@ -1,0 +1,221 @@
+.history-page {
+  min-height: 100vh;
+  background: #f5f7fa;
+}
+
+.history-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px;
+}
+
+.view-toggle {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 30px;
+  background: white;
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.view-toggle button {
+  flex: 1;
+  padding: 12px 20px;
+  border: 2px solid transparent;
+  background: transparent;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.view-toggle button:hover {
+  color: #667eea;
+  background: #f0f2ff;
+}
+
+.view-toggle button.active {
+  color: white;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-color: #667eea;
+}
+
+/* Completed Tasks Timeline */
+.tasks-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.history-task-item {
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  gap: 15px;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.history-task-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.task-status-badge {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  background: #27ae60;
+  color: white;
+  font-weight: bold;
+}
+
+.history-task-item .task-status-badge:has(+ .task-details .cancelled) {
+  background: #e74c3c;
+}
+
+.task-details {
+  flex: 1;
+}
+
+.task-details h3 {
+  font-size: 16px;
+  color: #2c3e50;
+  margin-bottom: 5px;
+}
+
+.task-details h3.cancelled {
+  text-decoration: line-through;
+  color: #999;
+}
+
+.task-description {
+  font-size: 14px;
+  color: #666;
+  margin: 5px 0 10px;
+}
+
+.task-meta {
+  display: flex;
+  gap: 15px;
+  font-size: 12px;
+  color: #999;
+}
+
+.completion-date {
+  font-weight: 600;
+}
+
+.task-assignment {
+  color: #667eea;
+  font-weight: 500;
+}
+
+/* Past OKRs */
+.okrs-by-quarter {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 20px;
+}
+
+.past-okr-card {
+  background: white;
+  border-radius: 8px;
+  padding: 25px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: relative;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.past-okr-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.okr-quarter-badge {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  padding: 6px 12px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.past-okr-card h3 {
+  font-size: 18px;
+  color: #2c3e50;
+  margin-bottom: 10px;
+  padding-right: 80px; /* Make room for badge */
+}
+
+.okr-description {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 20px;
+}
+
+.key-results-archive {
+  border-top: 2px solid #f0f0f0;
+  padding-top: 15px;
+}
+
+.key-results-archive h4 {
+  font-size: 13px;
+  color: #999;
+  margin-bottom: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.kr-archive-item {
+  padding: 12px;
+  background: #f8f9fc;
+  border-radius: 6px;
+  margin-bottom: 10px;
+}
+
+.kr-archive-item:last-child {
+  margin-bottom: 0;
+}
+
+.kr-archive-item .kr-description {
+  font-size: 14px;
+  color: #2c3e50;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.kr-final-status {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.confidence-label {
+  font-size: 12px;
+  color: #666;
+  font-weight: 500;
+}
+
+.confidence-badge {
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 600;
+  min-width: 45px;
+  text-align: center;
+}
