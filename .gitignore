@@ -14,6 +14,10 @@ frontend/build/
 
 # Database (don't commit user data)
 backend/data.json
+backend/data.json.backup
+backend/database.sqlite
+backend/database.sqlite-shm
+backend/database.sqlite-wal
 
 # Logs
 *.log

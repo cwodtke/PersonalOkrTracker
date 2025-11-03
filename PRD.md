@@ -3,16 +3,17 @@
 ## 1. Product Overview
 
 ### 1.1 Product Vision
-A personal productivity system that bridges strategic planning (OKRs) with daily execution through automated morning reminders and an intuitive task management webapp.
+A personal productivity system that bridges strategic planning (OKRs) with daily execution through automated morning reminders and an intuitive task management webapp. 
 
 ### 1.2 Target User
-Individual knowledge workers who use OKRs for goal setting and want to align daily tasks with quarterly objectives. 
+Individual knowledge workers who use OKRs for goal setting and want to align daily tasks with quarterly objectives. The objectives can be personal or work oriented. 
 
 ### 1.3 Core Value Proposition
 - Maintain focus on quarterly goals through daily reminders
 - Seamlessly connect strategic objectives to daily actions
 - Track progress against both goals and health metrics
 - Start each day with intentional planning
+- Make weekly retrospectives easily to collect and share
 
 ---
 
@@ -119,14 +120,29 @@ Individual knowledge workers who use OKRs for goal setting and want to align dai
 #### 3.3.1 Health Metric Definition
 **Priority: P0 (Must Have)**
 
+**Philosophy:**
+Health metrics use a simple Red/Yellow/Green status system for daily check-ins. Green is always the target - the goal is to keep all areas green. Users define their own custom metrics to track what matters to them.
+
+**Examples:**
+- Finances
+- Physical health
+- Mental health
+- Family
+- Relationships
+- Energy
+- Or any other area that matters to the user
+
 **Requirements:**
-- Define custom health metrics:
-  - Name (required, e.g., "Exercise", "Sleep", "Meditation")
-  - Description (optional)
-  - Type: Counter (numeric) or Boolean (yes/no)
-  - Target (optional, e.g., "150 minutes/week")
-  - Active status
-- Edit/archive health metrics
+- Each metric tracks:
+  - Name (required, user-defined) - e.g., "Exercise", "Finances", "Sleep"
+  - Description (optional) - what this metric represents
+  - Current status: 🔴 Red | 🟡 Yellow | 🟢 Green
+  - Notes (optional) - updated weekly to capture what's affecting this metric
+  - Last updated date
+- One-click status update
+- Weekly notes field to add context about what's affecting each metric
+- Status history for trend analysis
+- Full customization - users create any metrics they want
 
 ### 3.4 Task Management
 
@@ -154,13 +170,32 @@ Individual knowledge workers who use OKRs for goal setting and want to align dai
 - Create subtasks under any parent task
 - Subtask properties:
   - Title (required, max 200 chars)
+  - Deadline (optional, date + time)
   - Status: Todo, Done
-  - Inherits assignment from parent task
-- View subtasks in hierarchical structure
+  - **Inherits assignment from parent task** (cannot be changed)
+- View subtasks in hierarchical structure with optional deadlines displayed
 - Mark parent task complete only when all subtasks done (optional enforcement)
 - Support up to 3 levels of nesting
+- Each subtask can have its own deadline independent of parent task
+- Subtask form does NOT show assignment fields (automatically inherits from parent)
 
-#### 3.4.3 Task Viewing & Organization
+#### 3.4.3 Task Editing
+**Priority: P0 (Must Have)**
+
+**Requirements:**
+- Edit any task field after creation:
+  - Title
+  - Description
+  - Deadline
+  - **Assignment** (can reassign to different OKR, health metric, or Other)
+  - Status
+- Inline editing using the same form interface as task creation
+- Changes save immediately when form is submitted
+- Cancel option to discard changes
+- When editing a task, reassignment updates all future references
+- Subtasks cannot be reassigned (they always inherit parent assignment)
+
+#### 3.4.4 Task Viewing & Organization
 **Priority: P0 (Must Have)**
 
 **Requirements:**

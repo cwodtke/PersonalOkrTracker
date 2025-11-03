@@ -6,9 +6,14 @@ import db from './database.js';
 import { sendDailyEmail, testEmail } from './email.js';
 
 const app = express();
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
+const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5173';
 
-app.use(cors());
+// CORS configuration
+app.use(cors({
+  origin: FRONTEND_URL,
+  credentials: true
+}));
 app.use(express.json());
 
 // Middleware to get user from session/token
@@ -286,23 +291,111 @@ app.get('/api/health-metrics', getCurrentUser, (req, res) => {
 });
 
 app.post('/api/health-metrics', getCurrentUser, (req, res) => {
-  const { name, description, type, target } = req.body;
+  const { name, description, status, notes } = req.body;
 
   try {
     const id = uuidv4();
 
-    db.query.createHealthMetric({
+    const metric = db.query.createHealthMetric({
       id,
       user_id: req.userId,
       name,
       description: description || null,
-      type: type || 'counter',
-      target: target || null,
+      status: status || 'green',
+      notes: notes || null,
       active: true
     });
 
-    const metric = db.query.getHealthMetrics(req.userId).find(m => m.id === id);
     res.json(metric);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.put('/api/health-metrics/:id', getCurrentUser, (req, res) => {
+  const { id } = req.params;
+  const { status, notes, name, description } = req.body;
+
+  try {
+    const updates = {};
+    if (status !== undefined) updates.status = status;
+    if (notes !== undefined) updates.notes = notes;
+    if (name !== undefined) updates.name = name;
+    if (description !== undefined) updates.description = description;
+
+    const metric = db.query.updateHealthMetric(id, updates);
+    res.json(metric);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.delete('/api/health-metrics/:id', getCurrentUser, (req, res) => {
+  const { id } = req.params;
+
+  try {
+    db.query.deleteHealthMetric(id);
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// ============= HEARTBEAT WORK ENDPOINTS =============
+
+app.get('/api/heartbeat-work', getCurrentUser, (req, res) => {
+  try {
+    const work = db.query.getHeartbeatWork(req.userId);
+    res.json(work);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.post('/api/heartbeat-work', getCurrentUser, (req, res) => {
+  const { name, description, category } = req.body;
+
+  try {
+    const id = uuidv4();
+
+    const work = db.query.createHeartbeatWork({
+      id,
+      user_id: req.userId,
+      name,
+      description: description || null,
+      category: category || null,
+      active: true
+    });
+
+    res.json(work);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.put('/api/heartbeat-work/:id', getCurrentUser, (req, res) => {
+  const { id } = req.params;
+  const { name, description, category } = req.body;
+
+  try {
+    const updates = {};
+    if (name !== undefined) updates.name = name;
+    if (description !== undefined) updates.description = description;
+    if (category !== undefined) updates.category = category;
+
+    const work = db.query.updateHeartbeatWork(id, updates);
+    res.json(work);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.delete('/api/heartbeat-work/:id', getCurrentUser, (req, res) => {
+  const { id } = req.params;
+
+  try {
+    db.query.deleteHeartbeatWork(id);
+    res.json({ success: true });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -328,6 +421,11 @@ app.get('/api/tasks', getCurrentUser, (req, res) => {
         const metric = db.query.getHealthMetrics(req.userId).find(m => m.id === task.assignment_id);
         if (metric) {
           task.assignmentDetails = { id: metric.id, title: metric.name };
+        }
+      } else if (task.assignment_type === 'heartbeat_work') {
+        const work = db.query.getHeartbeatWork(req.userId).find(w => w.id === task.assignment_id);
+        if (work) {
+          task.assignmentDetails = { id: work.id, title: work.name };
         }
       }
     });

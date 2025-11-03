@@ -1,14 +1,16 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { getObjectives, createObjective, updateObjective, deleteObjective, getHealthMetrics, createHealthMetric, updateKeyResult } from '../api';
+import { getObjectives, createObjective, updateObjective, deleteObjective, getHealthMetrics, createHealthMetric, updateHealthMetric, deleteHealthMetric, getHeartbeatWork, createHeartbeatWork, updateHeartbeatWork, deleteHeartbeatWork, updateKeyResult } from '../api';
 import OKRQualityChecker from '../components/OKRQualityChecker';
 import './ManageOKRs.css';
 
 export default function ManageOKRs({ onLogout }) {
   const [objectives, setObjectives] = useState([]);
   const [healthMetrics, setHealthMetrics] = useState([]);
+  const [heartbeatWork, setHeartbeatWork] = useState([]);
   const [showOKRForm, setShowOKRForm] = useState(false);
   const [showMetricForm, setShowMetricForm] = useState(false);
+  const [showHeartbeatForm, setShowHeartbeatForm] = useState(false);
   const [loading, setLoading] = useState(true);
   const [editingKR, setEditingKR] = useState(null);
   const [editingOKR, setEditingOKR] = useState(null);
@@ -23,9 +25,19 @@ export default function ManageOKRs({ onLogout }) {
   const [newMetric, setNewMetric] = useState({
     name: '',
     description: '',
-    type: 'counter',
-    target: ''
+    status: 'green',
+    notes: ''
   });
+
+  const [newHeartbeat, setNewHeartbeat] = useState({
+    name: '',
+    description: '',
+    category: ''
+  });
+
+  const [editingMetric, setEditingMetric] = useState(null);
+  const [editingHeartbeat, setEditingHeartbeat] = useState(null);
+  const [editingNotes, setEditingNotes] = useState({});
 
   useEffect(() => {
     loadData();
@@ -33,13 +45,15 @@ export default function ManageOKRs({ onLogout }) {
 
   const loadData = async () => {
     try {
-      const [objData, metricsData] = await Promise.all([
+      const [objData, metricsData, heartbeatData] = await Promise.all([
         getObjectives(),
-        getHealthMetrics()
+        getHealthMetrics(),
+        getHeartbeatWork()
       ]);
 
       setObjectives(objData);
       setHealthMetrics(metricsData);
+      setHeartbeatWork(heartbeatData);
     } catch (error) {
       console.error('Error loading data:', error);
     } finally {
@@ -112,11 +126,74 @@ export default function ManageOKRs({ onLogout }) {
       setNewMetric({
         name: '',
         description: '',
-        type: 'counter',
-        target: ''
+        status: 'green',
+        notes: ''
       });
     } catch (error) {
       console.error('Error creating metric:', error);
+    }
+  };
+
+  const handleUpdateMetric = async (id, updates) => {
+    try {
+      const updated = await updateHealthMetric(id, updates);
+      setHealthMetrics(healthMetrics.map(m => m.id === id ? updated : m));
+      setEditingMetric(null);
+      // Clear the editing notes for this metric
+      const newEditingNotes = { ...editingNotes };
+      delete newEditingNotes[id];
+      setEditingNotes(newEditingNotes);
+    } catch (error) {
+      console.error('Error updating metric:', error);
+    }
+  };
+
+  const handleDeleteMetric = async (id) => {
+    if (!confirm('Are you sure you want to delete this health metric?')) return;
+
+    try {
+      await deleteHealthMetric(id);
+      setHealthMetrics(healthMetrics.filter(m => m.id !== id));
+    } catch (error) {
+      console.error('Error deleting metric:', error);
+    }
+  };
+
+  const handleCreateHeartbeat = async (e) => {
+    e.preventDefault();
+
+    try {
+      const created = await createHeartbeatWork(newHeartbeat);
+      setHeartbeatWork([...heartbeatWork, created]);
+      setShowHeartbeatForm(false);
+      setNewHeartbeat({
+        name: '',
+        description: '',
+        category: ''
+      });
+    } catch (error) {
+      console.error('Error creating heartbeat work:', error);
+    }
+  };
+
+  const handleUpdateHeartbeat = async (id, updates) => {
+    try {
+      const updated = await updateHeartbeatWork(id, updates);
+      setHeartbeatWork(heartbeatWork.map(h => h.id === id ? updated : h));
+      setEditingHeartbeat(null);
+    } catch (error) {
+      console.error('Error updating heartbeat work:', error);
+    }
+  };
+
+  const handleDeleteHeartbeat = async (id) => {
+    if (!confirm('Are you sure you want to delete this heartbeat work?')) return;
+
+    try {
+      await deleteHeartbeatWork(id);
+      setHeartbeatWork(heartbeatWork.filter(h => h.id !== id));
+    } catch (error) {
+      console.error('Error deleting heartbeat work:', error);
     }
   };
 
@@ -141,7 +218,7 @@ export default function ManageOKRs({ onLogout }) {
   };
 
   const handleDeleteOKR = async (id) => {
-    if (!confirm('Are you sure you want to delete this OKR?')) return;
+    if (!confirm('Are you sure you want to delete this goal?')) return;
 
     try {
       await deleteObjective(id);
@@ -193,6 +270,24 @@ export default function ManageOKRs({ onLogout }) {
     return `Q${quarter} ${year}`;
   };
 
+  const getStatusColor = (status) => {
+    switch (status) {
+      case 'green': return '#27ae60';
+      case 'yellow': return '#f39c12';
+      case 'red': return '#e74c3c';
+      default: return '#95a5a6';
+    }
+  };
+
+  const getStatusEmoji = (status) => {
+    switch (status) {
+      case 'green': return '🟢';
+      case 'yellow': return '🟡';
+      case 'red': return '🔴';
+      default: return '⚪';
+    }
+  };
+
   if (loading) {
     return <div className="loading">Loading...</div>;
   }
@@ -202,7 +297,7 @@ export default function ManageOKRs({ onLogout }) {
       <header className="page-header">
         <div className="header-content">
           <div>
-            <h1>Manage OKRs & Health Metrics</h1>
+            <h1>Manage Goals & Health Metrics</h1>
             <p>Define your quarterly objectives and personal wellness goals</p>
           </div>
           <div className="header-actions">
@@ -218,14 +313,14 @@ export default function ManageOKRs({ onLogout }) {
             <h2>Objectives & Key Results</h2>
             {!showOKRForm && (
               <button onClick={() => setShowOKRForm(true)} className="btn-primary">
-                + Add OKR
+                + Add Goal
               </button>
             )}
           </div>
 
           {showOKRForm && (
             <form onSubmit={editingOKR ? handleUpdateOKR : handleCreateOKR} className="okr-form card">
-              <h3>{editingOKR ? 'Edit OKR' : 'Create New OKR'}</h3>
+              <h3>{editingOKR ? 'Edit Goal' : 'Create New Goal'}</h3>
 
               <div className="form-row">
                 <div className="form-group">
@@ -348,7 +443,7 @@ export default function ManageOKRs({ onLogout }) {
                   Cancel
                 </button>
                 <button type="submit" className="btn-primary">
-                  {editingOKR ? 'Update OKR' : 'Create OKR'}
+                  {editingOKR ? 'Update Goal' : 'Create Goal'}
                 </button>
               </div>
             </form>
@@ -357,7 +452,7 @@ export default function ManageOKRs({ onLogout }) {
           <div className="objectives-list">
             {objectives.length === 0 ? (
               <div className="empty-state">
-                <p>No OKRs created yet. Add your first one to get started!</p>
+                <p>No goals created yet. Add your first one to get started!</p>
               </div>
             ) : (
               objectives.map(obj => (
@@ -449,6 +544,9 @@ export default function ManageOKRs({ onLogout }) {
           {showMetricForm && (
             <form onSubmit={handleCreateMetric} className="metric-form card">
               <h3>Create Health Metric</h3>
+              <p className="form-hint">
+                e.g. finances, physical health, mental health
+              </p>
 
               <div className="form-group">
                 <label>Name *</label>
@@ -456,39 +554,18 @@ export default function ManageOKRs({ onLogout }) {
                   type="text"
                   value={newMetric.name}
                   onChange={(e) => setNewMetric({ ...newMetric, name: e.target.value })}
-                  placeholder="e.g., Exercise, Sleep, Meditation"
+                  placeholder="e.g., Exercise, Sleep, Finances"
                   required
                 />
               </div>
 
               <div className="form-group">
-                <label>Description</label>
+                <label>Description (Optional)</label>
                 <textarea
                   value={newMetric.description}
                   onChange={(e) => setNewMetric({ ...newMetric, description: e.target.value })}
-                  placeholder="Optional details"
+                  placeholder="What does this metric track?"
                   rows="2"
-                />
-              </div>
-
-              <div className="form-group">
-                <label>Type</label>
-                <select
-                  value={newMetric.type}
-                  onChange={(e) => setNewMetric({ ...newMetric, type: e.target.value })}
-                >
-                  <option value="counter">Counter (Numeric)</option>
-                  <option value="boolean">Boolean (Yes/No)</option>
-                </select>
-              </div>
-
-              <div className="form-group">
-                <label>Target (Optional)</label>
-                <input
-                  type="text"
-                  value={newMetric.target}
-                  onChange={(e) => setNewMetric({ ...newMetric, target: e.target.value })}
-                  placeholder="e.g., 4x per week, 7 hours/night"
                 />
               </div>
 
@@ -511,9 +588,173 @@ export default function ManageOKRs({ onLogout }) {
             ) : (
               healthMetrics.map(metric => (
                 <div key={metric.id} className="metric-card card">
-                  <h3>{metric.name}</h3>
-                  {metric.description && <p>{metric.description}</p>}
-                  {metric.target && <p className="metric-target">Target: {metric.target}</p>}
+                  <div className="metric-header">
+                    <div>
+                      <h3>{metric.name}</h3>
+                    </div>
+                    <button
+                      onClick={() => handleDeleteMetric(metric.id)}
+                      className="btn-icon"
+                      title="Delete"
+                    >
+                      🗑️
+                    </button>
+                  </div>
+
+                  {metric.description && <p className="metric-description">{metric.description}</p>}
+
+                  <div className="metric-status-section">
+                    <label>Current Status:</label>
+                    <div className="status-buttons">
+                      {['green', 'yellow', 'red'].map(status => (
+                        <button
+                          key={status}
+                          type="button"
+                          onClick={() => {
+                            handleUpdateMetric(metric.id, {
+                              status,
+                              notes: editingNotes[metric.id] !== undefined ? editingNotes[metric.id] : metric.notes
+                            });
+                          }}
+                          className={`status-btn ${metric.status === status ? 'active' : ''}`}
+                          style={{
+                            backgroundColor: metric.status === status ? getStatusColor(status) : 'transparent',
+                            borderColor: getStatusColor(status),
+                            color: metric.status === status ? 'white' : getStatusColor(status)
+                          }}
+                        >
+                          {getStatusEmoji(status)} {status.charAt(0).toUpperCase() + status.slice(1)}
+                        </button>
+                      ))}
+                    </div>
+
+                    <div className="notes-section">
+                      <label>Notes (Optional):</label>
+                      <textarea
+                        value={editingNotes[metric.id] !== undefined ? editingNotes[metric.id] : (metric.notes || '')}
+                        onChange={(e) => setEditingNotes({ ...editingNotes, [metric.id]: e.target.value })}
+                        placeholder="What's affecting this metric this week?"
+                        rows="2"
+                        className="notes-input"
+                      />
+                    </div>
+                  </div>
+
+                  {metric.last_updated && (
+                    <div className="metric-footer">
+                      <small>Last updated: {new Date(metric.last_updated).toLocaleDateString()}</small>
+                    </div>
+                  )}
+                </div>
+              ))
+            )}
+          </div>
+        </section>
+
+        <section className="heartbeat-section">
+          <div className="section-header">
+            <h2>Heartbeat Work</h2>
+            {!showHeartbeatForm && (
+              <button onClick={() => setShowHeartbeatForm(true)} className="btn-primary">
+                + Add Heartbeat Work
+              </button>
+            )}
+          </div>
+
+          {showHeartbeatForm && (
+            <form onSubmit={handleCreateHeartbeat} className="heartbeat-form card">
+              <h3>Add Heartbeat Work</h3>
+              <p>Track ongoing, recurring work like classes or regular commitments</p>
+
+              <div className="form-group">
+                <label>Name</label>
+                <input
+                  type="text"
+                  value={newHeartbeat.name}
+                  onChange={(e) => setNewHeartbeat({ ...newHeartbeat, name: e.target.value })}
+                  placeholder="e.g., Teaching my classes"
+                  required
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Description (optional)</label>
+                <textarea
+                  value={newHeartbeat.description}
+                  onChange={(e) => setNewHeartbeat({ ...newHeartbeat, description: e.target.value })}
+                  placeholder="Additional details..."
+                  rows="2"
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Category (optional)</label>
+                <input
+                  type="text"
+                  value={newHeartbeat.category}
+                  onChange={(e) => setNewHeartbeat({ ...newHeartbeat, category: e.target.value })}
+                  placeholder="e.g., Work, Teaching, Admin"
+                />
+              </div>
+
+              <div className="form-actions">
+                <button type="button" onClick={() => setShowHeartbeatForm(false)} className="btn-secondary">
+                  Cancel
+                </button>
+                <button type="submit" className="btn-primary">
+                  Add Heartbeat Work
+                </button>
+              </div>
+            </form>
+          )}
+
+          <div className="heartbeat-list">
+            {heartbeatWork.length === 0 ? (
+              <div className="empty-state">
+                <p>No heartbeat work added yet. Add recurring work to track daily tasks.</p>
+              </div>
+            ) : (
+              heartbeatWork.map(work => (
+                <div key={work.id} className="heartbeat-card card">
+                  <div className="card-header">
+                    {editingHeartbeat === work.id ? (
+                      <input
+                        type="text"
+                        defaultValue={work.name}
+                        onBlur={(e) => handleUpdateHeartbeat(work.id, { name: e.target.value })}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') {
+                            handleUpdateHeartbeat(work.id, { name: e.target.value });
+                          } else if (e.key === 'Escape') {
+                            setEditingHeartbeat(null);
+                          }
+                        }}
+                        autoFocus
+                        className="edit-input"
+                      />
+                    ) : (
+                      <h3 onClick={() => setEditingHeartbeat(work.id)} className="editable-title">
+                        {work.name}
+                      </h3>
+                    )}
+                    <button
+                      onClick={() => handleDeleteHeartbeat(work.id)}
+                      className="btn-icon"
+                      title="Delete"
+                    >
+                      🗑️
+                    </button>
+                  </div>
+
+                  {work.description && (
+                    <p className="heartbeat-description">{work.description}</p>
+                  )}
+
+                  {work.category && (
+                    <div className="heartbeat-category">
+                      <span className="category-badge">{work.category}</span>
+                    </div>
+                  )}
                 </div>
               ))
             )}

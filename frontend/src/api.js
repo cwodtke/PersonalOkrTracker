@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:3001/api';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
 
 // Get userId from localStorage
 const getUserId = () => localStorage.getItem('userId');
@@ -100,6 +100,55 @@ export const createHealthMetric = async (metric) => {
     method: 'POST',
     headers: headers(),
     body: JSON.stringify(metric)
+  });
+  return response.json();
+};
+
+export const updateHealthMetric = async (id, updates) => {
+  const response = await fetch(`${API_URL}/health-metrics/${id}`, {
+    method: 'PUT',
+    headers: headers(),
+    body: JSON.stringify(updates)
+  });
+  return response.json();
+};
+
+export const deleteHealthMetric = async (id) => {
+  const response = await fetch(`${API_URL}/health-metrics/${id}`, {
+    method: 'DELETE',
+    headers: headers()
+  });
+  return response.json();
+};
+
+// Heartbeat Work
+export const getHeartbeatWork = async () => {
+  const response = await fetch(`${API_URL}/heartbeat-work`, { headers: headers() });
+  return response.json();
+};
+
+export const createHeartbeatWork = async (work) => {
+  const response = await fetch(`${API_URL}/heartbeat-work`, {
+    method: 'POST',
+    headers: headers(),
+    body: JSON.stringify(work)
+  });
+  return response.json();
+};
+
+export const updateHeartbeatWork = async (id, updates) => {
+  const response = await fetch(`${API_URL}/heartbeat-work/${id}`, {
+    method: 'PUT',
+    headers: headers(),
+    body: JSON.stringify(updates)
+  });
+  return response.json();
+};
+
+export const deleteHeartbeatWork = async (id) => {
+  const response = await fetch(`${API_URL}/heartbeat-work/${id}`, {
+    method: 'DELETE',
+    headers: headers()
   });
   return response.json();
 };

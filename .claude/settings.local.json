@@ -7,7 +7,12 @@
       "Bash(taskkill:*)",
       "Bash(nul)",
       "Bash(netstat:*)",
-      "Bash(findstr:*)"
+      "Bash(findstr:*)",
+      "Bash(dir:*)",
+      "Bash(npm install:*)",
+      "Bash(copy:*)",
+      "Bash(node migrate.js:*)",
+      "Bash(node migrate-status.js:*)"
     ],
     "deny": [],
     "ask": []

@@ -55,7 +55,7 @@ export default function History({ onLogout }) {
         <div className="header-content">
           <div>
             <h1>📚 History</h1>
-            <p>Your past OKRs and completed tasks</p>
+            <p>Your past goals and completed tasks</p>
           </div>
           <div className="header-actions">
             <Link to="/" className="btn-secondary">Back to Dashboard</Link>
@@ -76,7 +76,7 @@ export default function History({ onLogout }) {
             className={view === 'okrs' ? 'active' : ''}
             onClick={() => setView('okrs')}
           >
-            Past OKRs ({pastObjectives.length})
+            Past Goals ({pastObjectives.length})
           </button>
         </div>
 
@@ -122,7 +122,7 @@ export default function History({ onLogout }) {
           <div className="past-okrs-section">
             {pastObjectives.length === 0 ? (
               <div className="empty-state">
-                <p>No past OKRs yet. This is your first quarter!</p>
+                <p>No past goals yet. This is your first quarter!</p>
               </div>
             ) : (
               <div className="okrs-by-quarter">
