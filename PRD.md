@@ -1,12 +1,12 @@
-# Product Requirements Document: Daily OKR Task Planner
+# Product Requirements Document: Daily Goal & Task Planner
 
 ## 1. Product Overview
 
 ### 1.1 Product Vision
-A personal productivity system that bridges strategic planning (OKRs) with daily execution through automated morning reminders and an intuitive task management webapp. 
+A personal productivity system that bridges strategic planning (Goals/OKRs) with daily execution through automated morning reminders and an intuitive task management webapp. Based on the Radical Focus methodology, the system helps users maintain focus on quarterly goals while tracking health metrics and heartbeat work.
 
 ### 1.2 Target User
-Individual knowledge workers who use OKRs for goal setting and want to align daily tasks with quarterly objectives. The objectives can be personal or work oriented. 
+Individual knowledge workers who use OKRs/Goals for goal setting and want to align daily tasks with quarterly objectives. The goals can be personal or work oriented. 
 
 ### 1.3 Core Value Proposition
 - Maintain focus on quarterly goals through daily reminders
@@ -118,7 +118,7 @@ Individual knowledge workers who use OKRs for goal setting and want to align dai
 ### 3.3 Health Metrics
 
 #### 3.3.1 Health Metric Definition
-**Priority: P0 (Must Have)**
+**Priority: P0 (Must Have)** ✅ **IMPLEMENTED**
 
 **Philosophy:**
 Health metrics use a simple Red/Yellow/Green status system for daily check-ins. Green is always the target - the goal is to keep all areas green. Users define their own custom metrics to track what matters to them.
@@ -139,48 +139,73 @@ Health metrics use a simple Red/Yellow/Green status system for daily check-ins. 
   - Current status: 🔴 Red | 🟡 Yellow | 🟢 Green
   - Notes (optional) - updated weekly to capture what's affecting this metric
   - Last updated date
-- One-click status update
+- One-click status update from dashboard
 - Weekly notes field to add context about what's affecting each metric
 - Status history for trend analysis
 - Full customization - users create any metrics they want
 
-### 3.4 Task Management
+### 3.4 Heartbeat Work
 
-#### 3.4.1 Task Creation
-**Priority: P0 (Must Have)**
+#### 3.4.1 Heartbeat Work Definition
+**Priority: P0 (Must Have)** ✅ **IMPLEMENTED**
+
+**Philosophy:**
+Heartbeat Work represents the ongoing, recurring work that must be done to keep systems running. Unlike goals (which have endpoints) and health metrics (which measure state), heartbeat work is continuous operational work.
+
+**Examples:**
+- Teaching classes (for educators)
+- Client support (for consultants)
+- Content publishing (for creators)
+- Team management (for managers)
+- Maintenance tasks (for engineers)
+
+**Requirements:**
+- Each heartbeat work item tracks:
+  - Name (required, user-defined) - e.g., "Teaching", "Client Work"
+  - Description (optional) - what this work represents
+  - Category (optional) - for grouping similar work
+  - Active status - can be archived when no longer relevant
+- Tasks can be assigned to heartbeat work (alongside goals and health metrics)
+- Displayed on dashboard for visibility
+- Full CRUD operations (create, edit, delete, archive)
+
+### 3.5 Task Management
+
+#### 3.5.1 Task Creation
+**Priority: P0 (Must Have)** ✅ **IMPLEMENTED**
 
 **Requirements:**
 - Quick-add task interface on daily planning page
 - Task properties:
   - Title (required, max 200 chars)
-  - Description (optional, rich text)
+  - Description (optional, text)
   - Deadline (optional, date + time)
   - Assignment:
-    - Link to specific OKR (by selecting Objective)
+    - Link to specific Goal (by selecting Objective)
     - Link to health metric
+    - Link to heartbeat work
     - Or mark as "Other" (unaligned)
-  - Status: Todo, In Progress, Done, Cancelled
+  - Status: Not Started, In Progress, Done
   - Created date (auto)
-- Batch task creation (add multiple tasks quickly)
+- Auto-assign to single goal when only one exists (best practice)
 
-#### 3.4.2 Subtask Management
-**Priority: P0 (Must Have)**
+#### 3.5.2 Subtask Management
+**Priority: P0 (Must Have)** ✅ **IMPLEMENTED**
 
 **Requirements:**
 - Create subtasks under any parent task
 - Subtask properties:
   - Title (required, max 200 chars)
   - Deadline (optional, date + time)
-  - Status: Todo, Done
+  - Status: Not Started, In Progress, Done
   - **Inherits assignment from parent task** (cannot be changed)
 - View subtasks in hierarchical structure with optional deadlines displayed
-- Mark parent task complete only when all subtasks done (optional enforcement)
-- Support up to 3 levels of nesting
+- Visual indentation to show hierarchy
 - Each subtask can have its own deadline independent of parent task
 - Subtask form does NOT show assignment fields (automatically inherits from parent)
 
-#### 3.4.3 Task Editing
-**Priority: P0 (Must Have)**
+#### 3.5.3 Task Editing
+**Priority: P0 (Must Have)** ✅ **IMPLEMENTED**
 
 **Requirements:**
 - Edit any task field after creation:
@@ -195,76 +220,86 @@ Health metrics use a simple Red/Yellow/Green status system for daily check-ins. 
 - When editing a task, reassignment updates all future references
 - Subtasks cannot be reassigned (they always inherit parent assignment)
 
-#### 3.4.4 Task Viewing & Organization
-**Priority: P0 (Must Have)**
+#### 3.5.4 Task Viewing & Organization
+**Priority: P0 (Must Have)** ✅ **IMPLEMENTED**
 
 **Requirements:**
-- **Today view**: Tasks planned for today (excludes completed)
-- **Upcoming view**: Tasks with future deadlines (excludes completed)
+- **Today view**: Tasks with today's deadline or no deadline (excludes done)
+- **Upcoming view**: Tasks with future deadlines (excludes done) - **DEFAULT VIEW**
 - **All tasks view**: All incomplete tasks
-- **History view**: Completed and cancelled tasks with completion dates
+- **Completed view**: Done tasks with completion dates
+- Tasks aligned left without background box (matches goals layout)
+- Full-width responsive design
+- View preference saved in browser localStorage
 - Filter by:
-  - Assignment (specific OKR, health metric, unaligned)
+  - Assignment (specific goal, health metric, heartbeat work, unaligned)
   - Status
   - Date range
-- Sort by: deadline, created date, status, completion date
-- Search tasks by title/description
 
 **Data Retention Policy:**
 - All tasks remain in the system indefinitely
-- Completed tasks move to History view automatically
+- Completed tasks filtered out of main views automatically
 - Never delete tasks - preserve complete work history for analysis
-- Maintain audit trail of all work toward OKRs
+- Maintain audit trail of all work toward goals
 
-#### 3.4.4 Task Updates
-**Priority: P0 (Must Have)**
+#### 3.5.5 Task Updates
+**Priority: P0 (Must Have)** ✅ **IMPLEMENTED**
 
-- Update status (drag-and-drop or dropdown)
-- Edit task properties inline
-- Delete tasks (with confirmation)
-- Move tasks (change assignment, deadline)
-- Complete multiple tasks at once (bulk actions)
+- Update status via dropdown (Not Started/In Progress/Done)
+- Edit task properties inline using task form
+- Delete tasks
+- Change assignment and deadline through edit
 
-### 3.5 Progress Tracking & Analytics
+### 3.6 Progress Tracking & Analytics
 
-#### 3.5.1 Progress Dashboard
-**Priority: P1 (Should Have)**
+#### 3.6.1 Progress Dashboard
+**Priority: P1 (Should Have)** ⏳ **PLANNED**
 
 **Requirements:**
 - Overview of current quarter:
-  - OKR progress (completion percentage)
+  - Goal progress (completion percentage)
   - Health metrics tracking
   - Tasks completed this week/month/quarter
 - Visual charts:
-  - Tasks by OKR (distribution)
+  - Tasks by goal/heartbeat work (distribution)
   - Completion rate over time
   - Health metric trends
+  - Time allocation analysis
 
-#### 3.5.2 Historical View
-**Priority: P2 (Nice to Have)**
+#### 3.6.2 Historical View
+**Priority: P1 (Should Have)** ✅ **IMPLEMENTED** (Basic version)
 
-- View past quarters' OKRs and tasks
-- Compare quarter-over-quarter progress
-- Export data (CSV, JSON)
+- View past quarters' goals and tasks via History page
+- All data stored with timestamps for future analytics
+- Compare quarter-over-quarter progress (planned enhancement)
+- Export data (CSV, JSON) (planned enhancement)
 
-### 3.6 Authentication & Security
+### 3.7 Authentication & Security
 
-#### 3.6.1 User Authentication
-**Priority: P0 (Must Have)**
+#### 3.7.1 User Authentication
+**Priority: P0 (Must Have)** ✅ **IMPLEMENTED** (Email setup pending)
 
 **Requirements:**
-- Magic link authentication from email (primary method)
-- Traditional login (email + password) as backup
-- Session management (7-day session duration)
-- Secure password reset flow
+- Magic link authentication via email (primary method)
+  - Currently logs to console, actual email sending requires configuration
+  - Users can log in with any email (creates account automatically)
+  - Magic links stored with expiration (24 hours)
+- Session management via localStorage (user ID persistence)
+- No password required (passwordless authentication)
 
-#### 3.6.2 Data Security
-**Priority: P0 (Must Have)**
+**Email Setup Required:**
+- Configure Nodemailer with Gmail or SendGrid
+- Enable actual magic link email sending
+- Enable daily reminder emails
 
-- All data encrypted at rest and in transit (HTTPS/TLS)
-- User data isolation (multi-tenant architecture)
-- Regular backups
-- GDPR compliance (right to export, right to deletion)
+#### 3.7.2 Data Security
+**Priority: P0 (Must Have)** ✅ **IMPLEMENTED**
+
+- HTTPS/TLS in production (Render deployment)
+- User data isolation (userId-based queries)
+- SQLite database with Write-Ahead Logging (WAL)
+- Data persists between deployments
+- All user data associated with userId for isolation
 
 ---
 
@@ -292,31 +327,47 @@ Health metrics use a simple Red/Yellow/Green status system for daily check-ins. 
 
 ---
 
-## 5. Technical Architecture (High-Level)
+## 5. Technical Architecture (Implemented)
 
 ### 5.1 System Components
 
-#### Frontend
-- Modern web framework (React, Vue, or Svelte)
-- Responsive design (mobile-first)
-- Progressive Web App (PWA) for offline capability
-- State management for task updates
+#### Frontend ✅ **IMPLEMENTED**
+- **Framework:** React 19 with Vite
+- **Routing:** React Router DOM
+- **Styling:** CSS (modular CSS files)
+- **State Management:** React hooks (useState, useEffect)
+- **Responsive Design:** Flexbox/Grid with mobile breakpoints
+- **Build:** Vite build system
+- **Deployment:** Render (free tier)
+- **URL:** https://personal-okr-frontend.onrender.com
 
-#### Backend
-- RESTful API or GraphQL
-- Authentication service
-- Database for user data, OKRs, tasks
-- Job scheduler for daily emails
+#### Backend ✅ **IMPLEMENTED**
+- **Framework:** Express.js (Node.js)
+- **API:** RESTful API
+- **Database:** SQLite with better-sqlite3
+  - WAL (Write-Ahead Logging) mode for concurrency
+  - Automatic schema creation
+  - Foreign key constraints
+  - Indexes for performance
+- **Authentication:** Magic link system (email setup pending)
+- **Job Scheduler:** node-cron (configured but needs email setup)
+- **Deployment:** Render (free tier)
+- **URL:** https://personalokrtracker.onrender.com
 
-#### Email Service
-- Transactional email provider (SendGrid, AWS SES, Postmark)
-- HTML email templates
-- Click tracking for magic links
+#### Email Service ⏳ **CONFIGURED** (Needs setup)
+- **Library:** Nodemailer (installed, not configured)
+- **Options:** Gmail (with app password) or SendGrid
+- **Templates:** Console logging currently (placeholder for actual emails)
+- **Scheduling:** Cron job ready (runs every minute, needs filtering logic)
 
-#### Infrastructure
-- Cloud hosting (AWS, GCP, or Vercel/Railway for simple deployment)
-- Database (PostgreSQL or similar)
-- Job queue for scheduled tasks (cron, or service like Inngest)
+#### Infrastructure ✅ **DEPLOYED**
+- **Hosting:** Render (free tier)
+  - Backend and frontend as separate web services
+  - Auto-deploy from GitHub on push to main branch
+  - Environment variables for configuration
+- **Database:** SQLite (file-based, persists on Render)
+- **CORS:** Configured for frontend-backend communication
+- **Limitations:** Free tier services sleep after 15 min inactivity
 
 ### 5.2 Data Model (Core Entities)
 
@@ -566,10 +617,12 @@ Success Criteria:
 #### v2 - Radical Focus Enhancements
 **Goal: Deeper alignment with Radical Focus methodology**
 
-- **Confidence Tracking**: Track confidence level (0-10 scale) for each Key Result
-  - Weekly confidence updates
-  - Confidence trend visualization
-  - Alerts when confidence drops below threshold
+- **Confidence Tracking**: ✅ **IMPLEMENTED**
+  - Track confidence level (0-10 scale) for each Key Result
+  - Click-to-edit inline updates
+  - Color-coded confidence levels (High/Medium/Low)
+  - Future: Confidence trend visualization
+  - Future: Alerts when confidence drops below threshold
 - **Weekly Celebrations & Reflections**:
   - Friday celebration prompts (What did we accomplish?)
   - Weekly learning capture (What did we learn?)
@@ -629,7 +682,27 @@ Success Criteria:
 
 ---
 
-**Document Version**: 1.1
-**Last Updated**: 2025-10-31
+**Document Version**: 2.0
+**Last Updated**: 2025-11-03
 **Author**: Product Owner
-**Status**: Ready for Review
+**Status**: MVP Implemented - Deployed to Production
+
+**Production URLs:**
+- Frontend: https://personal-okr-frontend.onrender.com
+- Backend API: https://personalokrtracker.onrender.com
+
+**Implementation Status:**
+- ✅ Core OKR/Goal Management with Key Results
+- ✅ Confidence Tracking (Radical Focus)
+- ✅ Health Metrics (Red/Yellow/Green)
+- ✅ Heartbeat Work (NEW feature)
+- ✅ Task Management (Not Started/In Progress/Done)
+- ✅ Subtasks with visual hierarchy
+- ✅ Magic Link Authentication (console-based, needs email setup)
+- ✅ Responsive Design (mobile + desktop)
+- ✅ Full-width layout
+- ✅ SQLite Database
+- ✅ Deployed on Render (free tier)
+- ⏳ Email System (configured, needs Gmail/SendGrid setup)
+- ⏳ Daily Reminder Emails (cron scheduled, needs email setup)
+- ⏳ Analytics & Charts (data collected, visualization pending)
