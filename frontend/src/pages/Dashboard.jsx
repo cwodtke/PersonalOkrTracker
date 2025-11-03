@@ -22,8 +22,8 @@ export default function Dashboard({ onLogout }) {
   const [heartbeatWork, setHeartbeatWork] = useState([]);
   const [tasks, setTasks] = useState([]);
   const [view, setView] = useState(() => {
-    // Load saved view from localStorage, default to 'today' if not found
-    return localStorage.getItem('dashboardView') || 'today';
+    // Load saved view from localStorage, default to 'upcoming' if not found
+    return localStorage.getItem('dashboardView') || 'upcoming';
   });
   const [showTaskForm, setShowTaskForm] = useState(false);
   const [loading, setLoading] = useState(true);

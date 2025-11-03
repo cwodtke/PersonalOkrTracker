@@ -16,8 +16,6 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  max-width: 1200px;
-  margin: 0 auto;
 }
 
 .header-title-section {
@@ -48,8 +46,6 @@
 }
 
 .dashboard-content {
-  max-width: 1200px;
-  margin: 0 auto;
   padding: 40px 40px;
 }
 
@@ -158,10 +154,8 @@
 }
 
 .tasks-section {
-  background: white;
-  border-radius: 8px;
-  padding: 30px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background: transparent;
+  padding: 0;
 }
 
 .task-input-container {

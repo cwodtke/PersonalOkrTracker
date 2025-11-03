@@ -12,7 +12,10 @@
       "Bash(npm install:*)",
       "Bash(copy:*)",
       "Bash(node migrate.js:*)",
-      "Bash(node migrate-status.js:*)"
+      "Bash(node migrate-status.js:*)",
+      "Bash(git push)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
     ],
     "deny": [],
     "ask": []
